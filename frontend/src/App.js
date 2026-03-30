@@ -1,53 +1,86 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
+import './index.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Auth
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+// Layout
+import DashboardLayout from './components/layout/DashboardLayout';
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+// Pages
+import DashboardPage from './pages/DashboardPage';
+import TradingTerminalPage from './pages/TradingTerminalPage';
+import StrategiesPage from './pages/StrategiesPage';
+import StrategyBuilderPage from './pages/StrategyBuilderPage';
+import OrdersPage from './pages/OrdersPage';
+import PositionsPage from './pages/PositionsPage';
+import ScreenerPage from './pages/ScreenerPage';
+import AnalyticsPage from './pages/AnalyticsPage';
+import PortfolioPage from './pages/PortfolioPage';
+import SettingsPage from './pages/SettingsPage';
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 function App() {
   return (
-    <div className="App">
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
+          {/* Public Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="terminal" element={<TradingTerminalPage />} />
+            <Route path="strategies" element={<StrategiesPage />} />
+            <Route path="strategy-builder" element={<StrategyBuilderPage />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="positions" element={<PositionsPage />} />
+            <Route path="screener" element={<ScreenerPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="portfolio" element={<PortfolioPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
-    </div>
+
+      {/* Toast Notifications */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          className: 'border-2 border-border rounded-none font-mono',
+          style: {
+            background: 'white',
+            color: 'hsl(var(--foreground))',
+          },
+        }}
+      />
+    </QueryClientProvider>
   );
 }
 
