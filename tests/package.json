@@ -1,0 +1,35 @@
+{
+  "name": "tradepro-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive test suite for TRADEPRO AI",
+  "scripts": {
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit:frontend": "cd ../frontend && yarn test --coverage",
+    "test:unit:backend": "cd ../backend && pytest --cov",
+    "test:unit": "npm run test:unit:frontend && npm run test:unit:backend",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:chrome": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:perf": "cd performance/load && k6 run 01-normal-load.js",
+    "test:perf:stress": "cd performance/load && k6 run --vus 5000 --duration 30m 01-normal-load.js",
+    "test:security": "npm run security:snyk && npm run security:audit",
+    "security:snyk": "snyk test",
+    "security:audit": "cd ../frontend && npm audit --audit-level=moderate",
+    "report:coverage": "open ../frontend/coverage/lcov-report/index.html",
+    "report:e2e": "playwright show-report",
+    "report:perf": "open reports/performance/index.html",
+    "clean": "rm -rf reports/*/",
+    "ci": "npm run test:unit && npm run test:e2e && npm run test:security"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@axe-core/playwright": "^4.8.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

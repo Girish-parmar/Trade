@@ -1,0 +1,96 @@
+[
+  {
+    "id": "strategy_001",
+    "name": "Simple RSI Strategy",
+    "description": "Buy when RSI < 30, Sell when RSI > 70",
+    "status": "active",
+    "version": 1,
+    "json_definition": {
+      "nodes": [
+        {
+          "id": "1",
+          "type": "indicator",
+          "data": { "label": "RSI", "period": 14 },
+          "position": { "x": 100, "y": 100 }
+        },
+        {
+          "id": "2",
+          "type": "condition",
+          "data": { "label": "Less Than", "value": 30 },
+          "position": { "x": 300, "y": 100 }
+        },
+        {
+          "id": "3",
+          "type": "action",
+          "data": { "label": "Buy" },
+          "position": { "x": 500, "y": 100 }
+        }
+      ],
+      "edges": [
+        { "id": "e1-2", "source": "1", "target": "2" },
+        { "id": "e2-3", "source": "2", "target": "3" }
+      ]
+    },
+    "tags": ["rsi", "momentum"]
+  },
+  {
+    "id": "strategy_002",
+    "name": "Moving Average Crossover",
+    "description": "Buy on golden cross, Sell on death cross",
+    "status": "draft",
+    "version": 1,
+    "json_definition": {
+      "nodes": [
+        {
+          "id": "1",
+          "type": "indicator",
+          "data": { "label": "Moving Average", "period": 50 },
+          "position": { "x": 100, "y": 100 }
+        },
+        {
+          "id": "2",
+          "type": "indicator",
+          "data": { "label": "Moving Average", "period": 200 },
+          "position": { "x": 100, "y": 200 }
+        },
+        {
+          "id": "3",
+          "type": "condition",
+          "data": { "label": "Cross Above" },
+          "position": { "x": 300, "y": 150 }
+        },
+        {
+          "id": "4",
+          "type": "action",
+          "data": { "label": "Buy" },
+          "position": { "x": 500, "y": 150 }
+        }
+      ],
+      "edges": [
+        { "id": "e1-3", "source": "1", "target": "3" },
+        { "id": "e2-3", "source": "2", "target": "3" },
+        { "id": "e3-4", "source": "3", "target": "4" }
+      ]
+    },
+    "tags": ["ma", "trend"]
+  },
+  {
+    "id": "strategy_003",
+    "name": "Invalid Strategy",
+    "description": "Strategy with validation errors",
+    "status": "draft",
+    "version": 1,
+    "json_definition": {
+      "nodes": [
+        {
+          "id": "1",
+          "type": "action",
+          "data": { "label": "Buy" },
+          "position": { "x": 100, "y": 100 }
+        }
+      ],
+      "edges": []
+    },
+    "tags": ["invalid"]
+  }
+]

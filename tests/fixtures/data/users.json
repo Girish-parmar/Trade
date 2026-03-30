@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": "507f1f77bcf86cd799439011",
+      "email": "testuser1@example.com",
+      "password": "TestPass123!",
+      "name": "Test User One",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "id": "507f1f77bcf86cd799439012",
+      "email": "testuser2@example.com",
+      "password": "TestPass123!",
+      "name": "Test User Two",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "id": "507f1f77bcf86cd799439013",
+      "email": "testadmin@example.com",
+      "password": "AdminPass123!",
+      "name": "Test Admin",
+      "role": "admin",
+      "status": "active"
+    },
+    {
+      "id": "507f1f77bcf86cd799439014",
+      "email": "suspended@example.com",
+      "password": "TestPass123!",
+      "name": "Suspended User",
+      "role": "user",
+      "status": "suspended"
+    }
+  ]
+}

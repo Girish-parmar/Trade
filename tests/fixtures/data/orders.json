@@ -1,0 +1,40 @@
+[
+  {
+    "symbol": "AAPL",
+    "side": "buy",
+    "quantity": 10,
+    "price": 150.50,
+    "order_type": "limit",
+    "status": "filled",
+    "filled_quantity": 10,
+    "avg_price": 150.45
+  },
+  {
+    "symbol": "GOOGL",
+    "side": "buy",
+    "quantity": 5,
+    "order_type": "market",
+    "status": "pending",
+    "filled_quantity": 0,
+    "avg_price": null
+  },
+  {
+    "symbol": "MSFT",
+    "side": "sell",
+    "quantity": 20,
+    "price": 300.00,
+    "order_type": "limit",
+    "status": "cancelled",
+    "filled_quantity": 0,
+    "avg_price": null
+  },
+  {
+    "symbol": "TSLA",
+    "side": "buy",
+    "quantity": 15,
+    "order_type": "market",
+    "status": "rejected",
+    "filled_quantity": 0,
+    "avg_price": null
+  }
+]
