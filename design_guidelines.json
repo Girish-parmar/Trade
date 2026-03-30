@@ -1,0 +1,105 @@
+{
+  "theme": "light",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "design_philosophy": "Objective, rigid, functional. The dashboard acts as a highly disciplined command center. Color exists only to guide action. Stark contrasts and tabular accuracy are prioritized over decorative elements. A rejection of the standard 'fintech dark mode' in favor of institutional, high-tier clarity.",
+  "colors": {
+    "background": {
+      "main": "#FFFFFF",
+      "secondary": "#F7F7F7",
+      "tertiary": "#EEEEEE"
+    },
+    "text": {
+      "primary": "#0A0A0A",
+      "secondary": "#5C5C5C",
+      "muted": "#8A8A8A"
+    },
+    "border": {
+      "subtle": "#E5E5E5",
+      "strong": "#1A1A1A"
+    },
+    "brand": {
+      "primary": "#0A0A0A",
+      "accent": "#0055FF"
+    },
+    "semantic": {
+      "success": "#00C853",
+      "warning": "#FFD600",
+      "error": "#FF3B30",
+      "info": "#0055FF"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Cabinet Grotesk, sans-serif",
+      "body": "IBM Plex Mono, monospace",
+      "data": "IBM Plex Mono, monospace"
+    },
+    "scales": {
+      "h1": "text-4xl tracking-tighter font-bold",
+      "h2": "text-2xl tracking-tight font-semibold",
+      "h3": "text-xl tracking-tight font-semibold",
+      "h4": "text-lg font-medium",
+      "body": "text-sm leading-relaxed",
+      "data": "text-sm tabular-nums",
+      "label": "text-xs tracking-[0.2em] uppercase font-bold"
+    }
+  },
+  "layout_and_spacing": {
+    "grid_strategy": "Control Room Grid (Dense). grid-cols-1 md:grid-cols-4 lg:grid-cols-12 with tight gaps (gap-4 or gap-6). Everything aligns to a strict box model.",
+    "container_padding": "Generous inner padding for structural elements (p-6, p-8) but tight padding for tabular data rows.",
+    "border_radius": "Rounded-none to max rounded-sm (2px) to maintain the brutalist, institutional feel.",
+    "alignment": "Strict left-alignment for data and labels. Center alignment ONLY for empty states or specialized visualizers."
+  },
+  "surface_styles": {
+    "dashboard_cards": "Grid Borders: flat background, 1px solid border-border/40, no soft shadows. For active states, border deepens to solid black.",
+    "headers": "Solid White background with a hard 1px bottom border (#E5E5E5). No glassmorphism here, must feel rigid.",
+    "buttons": "Primary: Solid black (#0A0A0A) background, white text, 0px border radius. Hover: slight lift and shadow. Secondary: Transparent background, 1px solid black border."
+  },
+  "components_strategy": {
+    "forms_inputs": "Shadcn based. Customization: remove border radius, use 1px solid border (#E5E5E5). On focus: ring-1 ring-black, border-black.",
+    "tables": "Dense. No vertical borders. 1px bottom border per row. Hover effect: bg-gray-50.",
+    "charts": "Shadcn charts (Recharts). Color palette for charts: Signal Blue (#0055FF), Obsidian (#0A0A0A), and Mint/Red for up/down. Strict axis lines.",
+    "strategy_builder": "React Flow with brutalist styling. Nodes have thick 2px borders, sharp corners. Connection lines are stark black with solid arrowheads.",
+    "modals": "Slide-in panels (Sheets) preferred over centered Modals for a terminal-like feel. Backdrop: black/20, no blur."
+  },
+  "motion": {
+    "hover": "Instant color swaps or crisp 0.15s transforms. No floating or bouncy animations.",
+    "transitions": "transition-colors duration-150 ease-out"
+  },
+  "icons": {
+    "library": "@phosphor-icons/react",
+    "style": "Regular or Bold weight, perfectly aligned with text baseline."
+  },
+  "media": {
+    "image_urls": {
+      "bank_logos": [
+        "https://images.unsplash.com/photo-1679676057052-69f07449ea8e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwzfHxiYW5rJTIwbG9nb3xlbnwwfHx8fDE3NzQ4Mzk5Njh8MA&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1649734929640-d0c0f79da545?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwyfHxiYW5rJTIwbG9nb3xlbnwwfHx8fDE3NzQ4Mzk5Njh8MA&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1693801873650-b1091c25abbf?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxiYW5rJTIwbG9nb3xlbnwwfHx8fDE3NzQ4Mzk5Njh8MA&ixlib=rb-4.1.0&q=85"
+      ],
+      "user_avatars": [
+        "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzQ4Mzk5Njl8MA&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzQ4Mzk5Njl8MA&ixlib=rb-4.1.0&q=85",
+        "https://images.pexels.com/photos/30535621/pexels-photo-30535621.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/33871730/pexels-photo-33871730.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      ],
+      "market_charts_placeholders": [
+        "https://images.pexels.com/photos/7567223/pexels-photo-7567223.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.unsplash.com/photo-1560221328-12fe60f83ab8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwzfHxzdG9jayUyMG1hcmtldCUyMGNoYXJ0fGVufDB8fHx8MTc3NDgzOTk3MHww&ixlib=rb-4.1.0&q=85"
+      ],
+      "decorative_backgrounds": [
+        "https://images.pexels.com/photos/4135324/pexels-photo-4135324.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      ]
+    }
+  },
+  "instructions_to_main_agent": [
+    "Execute all elements with rigorous structural discipline. Avoid soft, rounded, floating, or generic SaaS aesthetics.",
+    "Use Cabinet Grotesk for all major headings and numbers that need authoritative impact. Use IBM Plex Mono for all data grids, tables, and precise readouts.",
+    "Do NOT use card shadows. Rely on 1px solid borders (`border-gray-200` or `border-black/10`) for separation. Use a border-collapse grid approach where possible.",
+    "For the visual strategy builder (React Flow), apply the brutalist aesthetic: sharp nodes, thick connections, high contrast.",
+    "Apply `data-testid` to all interactive components according to the E1 specifications.",
+    "Install `@phosphor-icons/react` for icons to match the dense, functional aesthetic.",
+    "Ensure charts use the strictly defined semantic colors (Signal Blue, Mint Green, Warning Red).",
+    "Use the provided image URLs for user avatars, broker logos, and placeholders. DO NOT use placeholder text or dummy image generators."
+  ]
+}
