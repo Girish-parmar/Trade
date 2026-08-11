@@ -86,3 +86,8 @@ frontend/node_modules/.cache/default-development/0.pack
 # Environment files
 *.env
 *.env.*
+!**/.env.example
+
+# task-manager (standalone app, own deps/build output)
+task-manager/**/node_modules
+task-manager/**/dist
