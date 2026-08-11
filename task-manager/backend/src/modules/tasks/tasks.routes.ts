@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { prisma } from '../../lib/prisma';
 import { validate } from '../../middleware/validate';
-import { createTaskSchema, moveTaskSchema, updateTaskSchema } from './tasks.schemas';
+import { verifyProjectScoped } from '../../middleware/verifyProjectScoped';
+import { createTaskSchema, listTasksQuerySchema, moveTaskSchema, updateTaskSchema } from './tasks.schemas';
 import {
   completeTaskHandler,
   createTaskHandler,
@@ -13,7 +15,12 @@ import {
 
 const router = Router({ mergeParams: true });
 
-router.get('/', listTasksHandler);
+router.param(
+  'taskId',
+  verifyProjectScoped((id) => prisma.task.findUnique({ where: { id } }), 'Task'),
+);
+
+router.get('/', validate(listTasksQuerySchema), listTasksHandler);
 router.post('/', validate(createTaskSchema), createTaskHandler);
 router.get('/:taskId', getTaskHandler);
 router.patch('/:taskId', validate(updateTaskSchema), updateTaskHandler);

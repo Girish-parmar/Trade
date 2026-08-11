@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import { prisma } from '../../lib/prisma';
 import { validate } from '../../middleware/validate';
+import { verifyProjectScoped } from '../../middleware/verifyProjectScoped';
 import {
   createTemplateSchema,
   instantiateTemplateSchema,
@@ -15,6 +17,11 @@ import {
 } from './templates.controller';
 
 const router = Router({ mergeParams: true });
+
+router.param(
+  'templateId',
+  verifyProjectScoped((id) => prisma.taskTemplate.findUnique({ where: { id } }), 'Template'),
+);
 
 router.get('/', listTemplatesHandler);
 router.post('/', validate(createTemplateSchema), createTemplateHandler);

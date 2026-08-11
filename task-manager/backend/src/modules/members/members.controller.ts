@@ -29,7 +29,18 @@ export const addMemberHandler = asyncHandler(async (req: Request, res: Response)
   res.status(201).json({ member });
 });
 
+async function assertNotProjectOwner(projectId: string, memberId: string, action: string) {
+  const [project, member] = await Promise.all([
+    prisma.project.findUnique({ where: { id: projectId } }),
+    prisma.projectMember.findUnique({ where: { id: memberId } }),
+  ]);
+  if (project && member && member.userId === project.ownerId) {
+    throw new HttpError(403, `Cannot ${action} the project owner's membership`);
+  }
+}
+
 export const updateMemberHandler = asyncHandler(async (req: Request, res: Response) => {
+  await assertNotProjectOwner(req.params.projectId, req.params.memberId, 'change the role of');
   const member = await prisma.projectMember.update({
     where: { id: req.params.memberId },
     data: { role: req.body.role },
@@ -38,6 +49,7 @@ export const updateMemberHandler = asyncHandler(async (req: Request, res: Respon
 });
 
 export const removeMemberHandler = asyncHandler(async (req: Request, res: Response) => {
+  await assertNotProjectOwner(req.params.projectId, req.params.memberId, 'remove');
   await prisma.projectMember.delete({ where: { id: req.params.memberId } });
   res.status(204).send();
 });

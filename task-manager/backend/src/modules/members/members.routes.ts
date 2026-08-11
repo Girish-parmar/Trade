@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { prisma } from '../../lib/prisma';
 import { validate } from '../../middleware/validate';
 import { requireProjectMember } from '../../middleware/requireProjectMember';
+import { verifyProjectScoped } from '../../middleware/verifyProjectScoped';
 import { addMemberSchema, updateMemberSchema } from './members.schemas';
 import {
   addMemberHandler,
@@ -10,6 +12,11 @@ import {
 } from './members.controller';
 
 const router = Router({ mergeParams: true });
+
+router.param(
+  'memberId',
+  verifyProjectScoped((id) => prisma.projectMember.findUnique({ where: { id } }), 'Member'),
+);
 
 router.get('/', listMembersHandler);
 router.post('/', requireProjectMember('ADMIN'), validate(addMemberSchema), addMemberHandler);

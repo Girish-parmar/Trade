@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { QuickAddBar } from '@/components/quickadd/QuickAddBar';
 import { KanbanBoard } from '@/components/board/KanbanBoard';
+import { FilterBar } from '@/components/board/FilterBar';
 import { TaskDetailModal } from '@/components/task/TaskDetailModal';
-import { useProject } from '@/hooks/useProjects';
+import { useProject, useTags } from '@/hooks/useProjects';
 import { useTasks } from '@/hooks/useTasks';
 import type { Task } from '@/types';
 
@@ -12,7 +13,32 @@ export function ProjectBoardPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const { data: project } = useProject(projectId!);
   const { data: tasks = [], isLoading } = useTasks(projectId!);
+  const { data: projectTags = [] } = useTags(projectId!);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [search, setSearch] = useState('');
+  const [activeTagIds, setActiveTagIds] = useState<Set<string>>(new Set());
+
+  const toggleTag = (tagId: string) => {
+    setActiveTagIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(tagId)) next.delete(tagId);
+      else next.add(tagId);
+      return next;
+    });
+  };
+
+  const filteredTasks = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return tasks.filter((task) => {
+      const matchesSearch =
+        !q ||
+        task.title.toLowerCase().includes(q) ||
+        (task.description ?? '').toLowerCase().includes(q);
+      const matchesTags =
+        activeTagIds.size === 0 || task.tags.some((tag) => activeTagIds.has(tag.id));
+      return matchesSearch && matchesTags;
+    });
+  }, [tasks, search, activeTagIds]);
 
   if (!projectId) return null;
 
@@ -36,10 +62,18 @@ export function ProjectBoardPage() {
 
         <QuickAddBar projectId={projectId} />
 
+        <FilterBar
+          search={search}
+          onSearchChange={setSearch}
+          tags={projectTags}
+          activeTagIds={activeTagIds}
+          onToggleTag={toggleTag}
+        />
+
         {isLoading ? (
           <p className="text-slate-500">Loading tasks...</p>
         ) : (
-          <KanbanBoard projectId={projectId} tasks={tasks} onTaskClick={setSelectedTask} />
+          <KanbanBoard projectId={projectId} tasks={filteredTasks} onTaskClick={setSelectedTask} />
         )}
       </div>
 

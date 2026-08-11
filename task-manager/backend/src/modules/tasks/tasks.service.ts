@@ -59,6 +59,39 @@ async function nextPositionForColumn(projectId: string, status: TaskStatus) {
   return (last?.position ?? 0) + POSITION_GAP;
 }
 
+/**
+ * assigneeId and tagIds are user-supplied ids that are only meaningful
+ * within the same project: an assignee must be a project member (otherwise
+ * a non-member could be silently notified with the task's title, leaking
+ * it to someone with no access), and tags must belong to the project
+ * (otherwise TaskTag rows could point at another project's tag).
+ */
+async function assertAssigneeIsMember(projectId: string, assigneeId: string) {
+  const membership = await prisma.projectMember.findUnique({
+    where: { projectId_userId: { projectId, userId: assigneeId } },
+  });
+  if (!membership) {
+    throw new HttpError(400, 'Assignee must be a member of this project');
+  }
+}
+
+/**
+ * Dedupes tagIds and verifies every id belongs to the project. TaskTag has
+ * a composite (taskId, tagId) primary key, so callers must use the
+ * returned deduped list - not the raw input - when building Prisma
+ * `tags: { create: [...] } }` payloads, or a duplicated valid id would hit
+ * a unique-constraint error instead of just being a no-op duplicate.
+ */
+async function resolveProjectTagIds(projectId: string, tagIds: string[]): Promise<string[]> {
+  const uniqueIds = Array.from(new Set(tagIds));
+  if (uniqueIds.length === 0) return uniqueIds;
+  const count = await prisma.tag.count({ where: { id: { in: uniqueIds }, projectId } });
+  if (count !== uniqueIds.length) {
+    throw new HttpError(400, 'One or more tags do not belong to this project');
+  }
+  return uniqueIds;
+}
+
 export async function createTask(
   projectId: string,
   creatorId: string,
@@ -72,6 +105,11 @@ export async function createTask(
     tagIds?: string[];
   },
 ) {
+  const [, tagIds] = await Promise.all([
+    data.assigneeId ? assertAssigneeIsMember(projectId, data.assigneeId) : null,
+    data.tagIds ? resolveProjectTagIds(projectId, data.tagIds) : null,
+  ]);
+
   const status = data.status ?? 'TODO';
   const position = await nextPositionForColumn(projectId, status);
   const task = await prisma.task.create({
@@ -85,7 +123,7 @@ export async function createTask(
       dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
       assigneeId: data.assigneeId,
       position,
-      tags: data.tagIds ? { create: data.tagIds.map((tagId) => ({ tagId })) } : undefined,
+      tags: tagIds ? { create: tagIds.map((tagId) => ({ tagId })) } : undefined,
     },
     include: taskInclude,
   });
@@ -110,6 +148,7 @@ export async function getTask(taskId: string) {
 
 export async function updateTask(
   taskId: string,
+  projectId: string,
   data: {
     title?: string;
     description?: string | null;
@@ -123,9 +162,13 @@ export async function updateTask(
   if (!existing) {
     throw new HttpError(404, 'Task not found');
   }
+  const [, tagIds] = await Promise.all([
+    data.assigneeId ? assertAssigneeIsMember(projectId, data.assigneeId) : null,
+    data.tagIds ? resolveProjectTagIds(projectId, data.tagIds) : null,
+  ]);
 
   const task = await prisma.$transaction(async (tx) => {
-    if (data.tagIds) {
+    if (tagIds) {
       await tx.taskTag.deleteMany({ where: { taskId } });
     }
     return tx.task.update({
@@ -136,7 +179,7 @@ export async function updateTask(
         priority: data.priority,
         dueDate: data.dueDate === null ? null : data.dueDate ? new Date(data.dueDate) : undefined,
         assigneeId: data.assigneeId === null ? null : data.assigneeId,
-        tags: data.tagIds ? { create: data.tagIds.map((tagId) => ({ tagId })) } : undefined,
+        tags: tagIds ? { create: tagIds.map((tagId) => ({ tagId })) } : undefined,
       },
       include: taskInclude,
     });
@@ -178,9 +221,12 @@ export async function moveTask(
   beforeId?: string,
   afterId?: string,
 ) {
+  // Neighbors must belong to the same project and target column - otherwise
+  // a caller could pass an id from another project (or another column) and
+  // have this task's position computed relative to unrelated data.
   const [before, after] = await Promise.all([
-    beforeId ? prisma.task.findUnique({ where: { id: beforeId } }) : null,
-    afterId ? prisma.task.findUnique({ where: { id: afterId } }) : null,
+    beforeId ? prisma.task.findFirst({ where: { id: beforeId, projectId, status } }) : null,
+    afterId ? prisma.task.findFirst({ where: { id: afterId, projectId, status } }) : null,
   ]);
 
   let position: number;

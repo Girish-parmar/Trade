@@ -26,7 +26,7 @@ export const getTaskHandler = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const updateTaskHandler = asyncHandler(async (req: Request, res: Response) => {
-  const task = await tasksService.updateTask(req.params.taskId, req.body);
+  const task = await tasksService.updateTask(req.params.taskId, req.params.projectId, req.body);
   res.json({ task });
 });
 

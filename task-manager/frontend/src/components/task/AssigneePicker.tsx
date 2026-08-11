@@ -1,28 +1,27 @@
-import { useEffect, useState } from 'react';
-import type { User } from '@/types';
-import { searchUsers } from '@/api/users';
+import { useMemo, useState } from 'react';
+import type { ProjectMember, User } from '@/types';
 import { Input } from '@/components/common/Input';
 import { Avatar } from '@/components/common/Avatar';
 
 interface AssigneePickerProps {
   assignee: User | null;
+  members: ProjectMember[];
   onChange: (user: User | null) => void;
 }
 
-export function AssigneePicker({ assignee, onChange }: AssigneePickerProps) {
+// Only project members are valid assignees - the backend rejects
+// assigning to anyone who isn't a member of the project, so this only
+// ever offers members rather than searching all registered users.
+export function AssigneePicker({ assignee, members, onChange }: AssigneePickerProps) {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<User[]>([]);
 
-  useEffect(() => {
-    const timeout = setTimeout(async () => {
-      if (query.trim()) {
-        setResults(await searchUsers(query));
-      } else {
-        setResults([]);
-      }
-    }, 250);
-    return () => clearTimeout(timeout);
-  }, [query]);
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return members
+      .map((m) => m.user)
+      .filter((user) => user.name.toLowerCase().includes(q) || user.email.toLowerCase().includes(q));
+  }, [members, query]);
 
   if (assignee) {
     return (
@@ -43,7 +42,7 @@ export function AssigneePicker({ assignee, onChange }: AssigneePickerProps) {
   return (
     <div className="relative">
       <Input
-        placeholder="Search by name or email..."
+        placeholder="Search project members..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
@@ -56,7 +55,6 @@ export function AssigneePicker({ assignee, onChange }: AssigneePickerProps) {
                 onClick={() => {
                   onChange(user);
                   setQuery('');
-                  setResults([]);
                 }}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm hover:bg-slate-50"
               >
@@ -66,6 +64,9 @@ export function AssigneePicker({ assignee, onChange }: AssigneePickerProps) {
             </li>
           ))}
         </ul>
+      )}
+      {query.trim() && results.length === 0 && (
+        <p className="mt-1 text-xs text-slate-400">No matching project members.</p>
       )}
     </div>
   );
