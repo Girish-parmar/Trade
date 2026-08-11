@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: task-manager-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: taskmanager
+      POSTGRES_PASSWORD: taskmanager
+      POSTGRES_DB: taskmanager
+    ports:
+      - "5433:5432"
+    volumes:
+      - task-manager-pgdata:/var/lib/postgresql/data
+    networks:
+      - task-manager-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskmanager"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: task-manager-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://taskmanager:taskmanager@postgres:5432/taskmanager
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret}
+      PORT: 4000
+      CORS_ORIGIN: http://localhost:4173
+    ports:
+      - "4001:4000"
+    networks:
+      - task-manager-network
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:4001/api
+    container_name: task-manager-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "4173:80"
+    networks:
+      - task-manager-network
+
+networks:
+  task-manager-network:
+    driver: bridge
+
+volumes:
+  task-manager-pgdata:
