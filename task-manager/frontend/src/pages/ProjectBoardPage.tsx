@@ -47,7 +47,7 @@ export function ProjectBoardPage() {
       <div className="mx-auto max-w-6xl px-4 py-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <Link to="/" className="text-xs text-slate-400 hover:underline">
+            <Link to="/dashboard" className="text-xs text-slate-400 hover:underline">
               ← All projects
             </Link>
             <h1 className="text-xl font-bold text-slate-900">{project?.name}</h1>

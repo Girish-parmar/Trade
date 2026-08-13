@@ -16,7 +16,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2.5">
-        <Link to="/" className="text-lg font-bold text-indigo-600">
+        <Link to="/dashboard" className="text-lg font-bold text-indigo-600">
           Task Manager
         </Link>
         <div className="flex items-center gap-3">

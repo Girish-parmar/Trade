@@ -19,7 +19,7 @@ export function RegisterPage() {
     setSubmitting(true);
     try {
       await register(email, password, name);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
